@@ -8,20 +8,38 @@
 
 class UProceduralMeshComponent;
 
+UENUM(BlueprintType)
+enum class FunctionType : uint8
+{
+	EMPTY UMETA(DisplayName = "Empty"),
+	LINEAR UMETA(DisplayName = "Linear"),
+	SINE UMETA(DisplayName = "Sine"),
+};
+
 UCLASS()
 class FUNCCHAIN_API AFunctionMesh : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
+
+	const int SCALE = 10;
+
 	AFunctionMesh();
+
+	UFUNCTION(BlueprintCallable)
+	void Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, int lowerBound, int upperBound);
+
+	UFUNCTION(BlueprintCallable)
+	void Delete(int identifier);
+
 
 protected:
 	virtual void BeginPlay() override;
 
 	void GenerateTestTriangle(); 
 
-	void GenerateLinearFunction(); 
+	void GenerateLinearFunction(int identifier, float a, float b, float c, float d, int lowerBound, int upperBound);
 
 	void GenerateSinFunction();
 	
