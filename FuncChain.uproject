@@ -7,16 +7,23 @@
 		{
 			"Name": "FuncChain",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [
 		{
-			"Name": "ModelingToolsEditorMode",
-			"Enabled": true,
-			"TargetAllowList": [
-				"Editor"
-			]
-		}
+				"Name": "ModelingToolsEditorMode",
+				"Enabled": true,
+				"TargetAllowList": [
+						"Editor"
+				]
+		},
+		{ 
+				"Name": "ProceduralMeshComponent", 
+				"Enabled": true
+		} 
 	]
 }
