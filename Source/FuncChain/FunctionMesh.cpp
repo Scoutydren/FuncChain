@@ -4,12 +4,13 @@
 #include "FunctionMesh.h"
 #include "ProceduralMeshComponent.h"
 
+
 AFunctionMesh::AFunctionMesh()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>("ProceduralMesh");
-	ProceduralMesh->SetupAttachment(GetRootComponent()); 
+	ProceduralMesh->SetupAttachment(GetRootComponent());
 }
 
 void AFunctionMesh::BeginPlay()
@@ -17,8 +18,8 @@ void AFunctionMesh::BeginPlay()
 	Super::BeginPlay();
 
 	//GenerateTestTriangle(); 
-	//GenerateLinearFunction(); 
-	GenerateSinFunction(); 
+	GenerateLinearFunction(); 
+	//GenerateSinFunction(); 
 }
 
 void AFunctionMesh::GenerateTestTriangle()
