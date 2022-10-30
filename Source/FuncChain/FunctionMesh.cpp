@@ -4,7 +4,6 @@
 #include "FunctionMesh.h"
 #include "ProceduralMeshComponent.h"
 
-
 AFunctionMesh::AFunctionMesh()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -13,12 +12,34 @@ AFunctionMesh::AFunctionMesh()
 	ProceduralMesh->SetupAttachment(GetRootComponent());
 }
 
+void AFunctionMesh::Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, int lowerBound, int upperBound)
+{
+	switch (functionType)
+	{
+	case FunctionType::LINEAR:
+		GenerateLinearFunction(identifier, a, b, c, d, lowerBound, upperBound);
+		break;
+	case FunctionType::SINE:
+		break;
+	default:
+		break;
+	}
+	//GenerateTestTriangle(); 
+	//GenerateLinearFunction(); 
+	//GenerateSinFunction(); 
+}
+
+void AFunctionMesh::Delete(int identifier)
+{
+
+}
+
 void AFunctionMesh::BeginPlay()
 {
 	Super::BeginPlay();
 
 	//GenerateTestTriangle(); 
-	GenerateLinearFunction(); 
+	//GenerateLinearFunction(); 
 	//GenerateSinFunction(); 
 }
 
@@ -55,28 +76,68 @@ void AFunctionMesh::GenerateTestTriangle()
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
 }
 
-void AFunctionMesh::GenerateLinearFunction()
+void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, float c, float d, int lowerBound, int upperBound)
 {
-	// y = ax + b
-	
-	// Parameters, will expose later 
-	float a = 1.f;
-	float b = 0.f; 
+	// y = a(x - c) + d
+	// This is the function we want to use instead
+	// For sine, we want to use y = asin(b * x - c) + d
 
-	int numSegments = 100; 
-	for (int i = 0; i < numSegments; i += 1) {
+	/*
+	for (int i = lowerBound; i < upperBound + 1; i += 1) {
 		int stride = 1; 
-		float x1 = stride * i;
-		float z1 = a * x1 + b; 
-		float x2 = stride * (i + 1); 
-		float z2 = a * x2 + b; 
+		// We are using SCALE here to scale the board since blocks on the screen are like 10 pixels
+		// I tried doing this, but the x dimension was not scaling properly
+		float x1 = SCALE * (stride * i);
+		float z1 = SCALE * (a * (x1 - c) + d);
+		float x2 = SCALE * (stride * (i + 1));
+		float z2 = SCALE * (a * (x2 - c) + d);
 
-		float depth = 10.f; 
+		// Scaling depth too
+		float depth = SCALE * 5.f; 
+
+		// I made it -depth and +depth since the ball is on y=0
+		vertices.Add(FVector(x1, -depth, z1));
+		vertices.Add(FVector(x2, -depth, z2));
+		vertices.Add(FVector(x1, depth, z1));
+		vertices.Add(FVector(x2, depth, z2)); 
+
+		Triangles.Add(0 + 4 * i);
+		Triangles.Add(2 + 4 * i);
+		Triangles.Add(1 + 4 * i);
+		Triangles.Add(1 + 4 * i);
+		Triangles.Add(2 + 4 * i);
+		Triangles.Add(3 + 4 * i);
+	}
+
+	TArray<FVector> normals;
+
+	TArray<FVector2D> UV0;
+
+	TArray<FProcMeshTangent> tangents;
+
+	TArray<FLinearColor> vertexColors;
+
+	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
+	ProceduralMesh->CreateMeshSection_LinearColor(identifier, vertices, Triangles, normals, UV0, vertexColors, tangents, true);*/
+
+	// Parameters, will expose later 
+	float e = 1.f;
+	float f = 0.f;
+
+	int numSegments = 100;
+	for (int i = 0; i < numSegments; i += 1) {
+		int stride = 1;
+		float x1 = stride * i;
+		float z1 = e * x1 + f;
+		float x2 = stride * (i + 1);
+		float z2 = e * x2 + f;
+
+		float depth = 10.f;
 
 		vertices.Add(FVector(x1, 0, z1));
 		vertices.Add(FVector(x2, 0, z2));
 		vertices.Add(FVector(x1, depth, z1));
-		vertices.Add(FVector(x2, depth, z2)); 
+		vertices.Add(FVector(x2, depth, z2));
 
 		Triangles.Add(0 + 4 * i);
 		Triangles.Add(2 + 4 * i);
