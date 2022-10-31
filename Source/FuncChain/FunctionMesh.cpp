@@ -82,10 +82,10 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	// This is the function we want to use instead
 	// For sine, we want to use y = asin(b * x - c) + d
 
-	if (GEngine)
+	/*if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), lowerBound, upperBound));
-	}
+	}*/
 
 	for (float i = lowerBound; i < upperBound + 1; i += 1) {
 		int stride = 1; 
@@ -94,12 +94,12 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		float x2 = stride * (i + 1);
 		float z2 = a * (x2 - c) + d;
 
-		if (GEngine)
+		/*if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
-		}
+		}*/
 
 		float depth = 5.f; 
 
