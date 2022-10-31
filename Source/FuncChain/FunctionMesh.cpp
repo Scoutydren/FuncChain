@@ -109,12 +109,12 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		vertices.Add(FVector(x1, depth, z1));
 		vertices.Add(FVector(x2, depth, z2)); 
 
-		Triangles.Add(0 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(3 + 4 * i);
+		Triangles.Add(0 + 4 * (i - lowerBound));
+		Triangles.Add(2 + 4 * (i - lowerBound));
+		Triangles.Add(1 + 4 * (i - lowerBound));
+		Triangles.Add(1 + 4 * (i - lowerBound));
+		Triangles.Add(2 + 4 * (i - lowerBound));
+		Triangles.Add(3 + 4 * (i - lowerBound));
 	}
 
 	TArray<FVector> normals;
