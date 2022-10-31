@@ -23,12 +23,10 @@ class FUNCCHAIN_API AFunctionMesh : public AActor
 	
 public:	
 
-	const int SCALE = 10;
-
 	AFunctionMesh();
 
 	UFUNCTION(BlueprintCallable)
-	void Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, int lowerBound, int upperBound);
+	void Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
 
 	UFUNCTION(BlueprintCallable)
 	void Delete(int identifier);
@@ -39,7 +37,7 @@ protected:
 
 	void GenerateTestTriangle(); 
 
-	void GenerateLinearFunction(int identifier, float a, float b, float c, float d, int lowerBound, int upperBound);
+	void GenerateLinearFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
 
 	void GenerateSinFunction();
 	
