@@ -23,13 +23,13 @@ class FUNCCHAIN_API AFunctionMesh : public AActor
 	
 public:	
 
+	UPROPERTY(BlueprintReadWrite)
+	UProceduralMeshComponent* ProceduralMesh;
+
 	AFunctionMesh();
 
 	UFUNCTION(BlueprintCallable)
 	void Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
-
-	UFUNCTION(BlueprintCallable)
-	void Delete(int identifier);
 
 
 protected:
@@ -62,7 +62,4 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-
-private: 
-	UProceduralMeshComponent* ProceduralMesh; 
 };

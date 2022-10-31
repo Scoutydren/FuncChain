@@ -14,6 +14,10 @@ AFunctionMesh::AFunctionMesh()
 
 void AFunctionMesh::Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
 {
+	/*GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f"), identifier));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f"), ProceduralMesh->GetNumSections()));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f"), ProceduralMesh->GetNumSections()));*/
+
 	switch (functionType)
 	{
 	case FunctionType::LINEAR:
@@ -27,11 +31,6 @@ void AFunctionMesh::Generate(FunctionType functionType, int identifier, float a,
 	//GenerateTestTriangle(); 
 	//GenerateLinearFunction(); 
 	//GenerateSinFunction(); 
-}
-
-void AFunctionMesh::Delete(int identifier)
-{
-
 }
 
 void AFunctionMesh::BeginPlay()
@@ -126,7 +125,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	TArray<FLinearColor> vertexColors;
 
 	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
-	ProceduralMesh->CreateMeshSection_LinearColor(identifier, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
+	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
 
 	/*
 	// Parameters, will expose later 
