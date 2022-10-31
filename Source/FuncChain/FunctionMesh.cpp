@@ -12,7 +12,7 @@ AFunctionMesh::AFunctionMesh()
 	ProceduralMesh->SetupAttachment(GetRootComponent());
 }
 
-void AFunctionMesh::Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, int lowerBound, int upperBound)
+void AFunctionMesh::Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
 {
 	switch (functionType)
 	{
@@ -76,24 +76,32 @@ void AFunctionMesh::GenerateTestTriangle()
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
 }
 
-void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, float c, float d, int lowerBound, int upperBound)
+void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
 {
 	// y = a(x - c) + d
 	// This is the function we want to use instead
 	// For sine, we want to use y = asin(b * x - c) + d
 
-	/*
-	for (int i = lowerBound; i < upperBound + 1; i += 1) {
-		int stride = 1; 
-		// We are using SCALE here to scale the board since blocks on the screen are like 10 pixels
-		// I tried doing this, but the x dimension was not scaling properly
-		float x1 = SCALE * (stride * i);
-		float z1 = SCALE * (a * (x1 - c) + d);
-		float x2 = SCALE * (stride * (i + 1));
-		float z2 = SCALE * (a * (x2 - c) + d);
+	/*if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), lowerBound, upperBound));
+	}*/
 
-		// Scaling depth too
-		float depth = SCALE * 5.f; 
+	for (float i = lowerBound; i < upperBound + 1; i += 1) {
+		int stride = 1; 
+		float x1 = stride * i;
+		float z1 = a * (x1 - c) + d;
+		float x2 = stride * (i + 1);
+		float z2 = a * (x2 - c) + d;
+
+		/*if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
+		}*/
+
+		float depth = 5.f; 
 
 		// I made it -depth and +depth since the ball is on y=0
 		vertices.Add(FVector(x1, -depth, z1));
@@ -101,12 +109,12 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		vertices.Add(FVector(x1, depth, z1));
 		vertices.Add(FVector(x2, depth, z2)); 
 
-		Triangles.Add(0 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(3 + 4 * i);
+		Triangles.Add(0 + 4 * (i - lowerBound));
+		Triangles.Add(2 + 4 * (i - lowerBound));
+		Triangles.Add(1 + 4 * (i - lowerBound));
+		Triangles.Add(1 + 4 * (i - lowerBound));
+		Triangles.Add(2 + 4 * (i - lowerBound));
+		Triangles.Add(3 + 4 * (i - lowerBound));
 	}
 
 	TArray<FVector> normals;
@@ -118,8 +126,9 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	TArray<FLinearColor> vertexColors;
 
 	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
-	ProceduralMesh->CreateMeshSection_LinearColor(identifier, vertices, Triangles, normals, UV0, vertexColors, tangents, true);*/
+	ProceduralMesh->CreateMeshSection_LinearColor(identifier, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
 
+	/*
 	// Parameters, will expose later 
 	float e = 1.f;
 	float f = 0.f;
@@ -155,7 +164,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 
 	TArray<FLinearColor> vertexColors;
 
-	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
+	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);*/
 }
 
 void AFunctionMesh::GenerateSinFunction()
