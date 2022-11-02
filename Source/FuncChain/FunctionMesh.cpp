@@ -31,6 +31,9 @@ void AFunctionMesh::Generate(FunctionType functionType, int identifier, float a,
 	case FunctionType::EXPONENTIAL:
 		GenerateExponentialFunction(identifier, a, b, c, d, lowerBound, upperBound);
 		break;
+	case FunctionType::LOGARITHMIC:
+		GenerateLogarithmicFunction(identifier, a, b, c, d, lowerBound, upperBound);
+		break;
 	case FunctionType::SINE:
 		GenerateSineFunction(identifier, a, b, c, d, lowerBound, upperBound);
 		break;
@@ -95,7 +98,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), lowerBound, upperBound));
 	}*/
 
-	int stride = 1;
+	float stride = 1;
 	float depth = 5.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -183,7 +186,7 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 {
 	// y = a * (b * (x - c)) ^ 2 + d
 
-	int stride = 0.1;
+	float stride = 0.1;
 	float depth = 5.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -223,7 +226,7 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 {
 	// y = a * e ^ (b * (x - c)) + d
 
-	int stride = 0.1;
+	float stride = 0.1;
 	float depth = 5.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -252,11 +255,47 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
 }
 
+void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
+{
+	// y = a * e ^ (b * (x - c)) + d
+
+	float stride = 0.1;
+	float depth = 5.f;
+	TArray<FVector> normals;
+	TArray<FVector2D> UV0;
+	TArray<FProcMeshTangent> tangents;
+	TArray<FLinearColor> vertexColors;
+
+	// Makes sure bounds are in range of domain
+	float adjustedLowerBound = std::max(lowerBound, 0 + stride);
+
+	for (float i = adjustedLowerBound; i < upperBound + 1; i += stride) {
+		float x1 = i;
+		float z1 = a * log(b * (x1 - c)) + d;
+		float x2 = i + 1;
+		float z2 = a * log(b * (x2 - c)) + d;
+
+		vertices.Add(FVector(x1, -depth, z1));
+		vertices.Add(FVector(x2, -depth, z2));
+		vertices.Add(FVector(x1, depth, z1));
+		vertices.Add(FVector(x2, depth, z2));
+
+		Triangles.Add(0 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(3 + 4 * (i - adjustedLowerBound) / stride);
+	}
+
+	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
+}
+
 void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
 {
 	// y = a * sin(b * (x - c)) + d
 
-	int stride = 1;
+	float stride = 0.1;
 	float depth = 5.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
