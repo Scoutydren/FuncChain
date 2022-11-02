@@ -86,6 +86,14 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), lowerBound, upperBound));
 	}*/
 
+	TArray<FVector> normals;
+
+	TArray<FVector2D> UV0;
+
+	TArray<FProcMeshTangent> tangents;
+
+	TArray<FLinearColor> vertexColors;
+
 	for (float i = lowerBound; i < upperBound + 1; i += 1) {
 		int stride = 1; 
 		float x1 = stride * i;
@@ -114,15 +122,14 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		Triangles.Add(1 + 4 * (i - lowerBound));
 		Triangles.Add(2 + 4 * (i - lowerBound));
 		Triangles.Add(3 + 4 * (i - lowerBound));
+
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
 	}
 
-	TArray<FVector> normals;
-
-	TArray<FVector2D> UV0;
-
-	TArray<FProcMeshTangent> tangents;
-
-	TArray<FLinearColor> vertexColors;
+	
 
 	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
