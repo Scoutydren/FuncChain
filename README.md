@@ -8,6 +8,8 @@ function chain reaction machine
 4. Open the project in unreal engine
 5. On the bottom right corner of unreal engine, compile.
 6. Basic level is currently in Minimal_Default.
+7. Go to Project Settings and search for Modes.
+8. Change Default Pawn Class to None.
 
 ## Fixes
 * If the scale seems off, go to project settings -> engine -> user interface. Under DPI Scaling, set application scale to 1.0 (or whatever feels comfortable).
