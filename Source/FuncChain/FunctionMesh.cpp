@@ -4,6 +4,8 @@
 #include "FunctionMesh.h"
 #include "ProceduralMeshComponent.h"
 
+#include <cmath>
+
 AFunctionMesh::AFunctionMesh()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -23,7 +25,17 @@ void AFunctionMesh::Generate(FunctionType functionType, int identifier, float a,
 	case FunctionType::LINEAR:
 		GenerateLinearFunction(identifier, a, b, c, d, lowerBound, upperBound);
 		break;
+	case FunctionType::QUADRATIC:
+		GenerateQuadraticFunction(identifier, a, b, c, d, lowerBound, upperBound);
+		break;
+	case FunctionType::EXPONENTIAL:
+		GenerateExponentialFunction(identifier, a, b, c, d, lowerBound, upperBound);
+		break;
+	case FunctionType::LOGARITHMIC:
+		GenerateLogarithmicFunction(identifier, a, b, c, d, lowerBound, upperBound);
+		break;
 	case FunctionType::SINE:
+		GenerateSineFunction(identifier, a, b, c, d, lowerBound, upperBound);
 		break;
 	default:
 		break;
@@ -86,11 +98,17 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), lowerBound, upperBound));
 	}*/
 
-	for (float i = lowerBound; i < upperBound + 1; i += 1) {
-		int stride = 1; 
-		float x1 = stride * i;
+	float stride = 1;
+	float depth = 5.f;
+	TArray<FVector> normals;
+	TArray<FVector2D> UV0;
+	TArray<FProcMeshTangent> tangents;
+	TArray<FLinearColor> vertexColors;
+
+	for (float i = lowerBound; i < upperBound + 1; i += stride) {
+		float x1 = i;
 		float z1 = a * (x1 - c) + d;
-		float x2 = stride * (i + 1);
+		float x2 = i + 1;
 		float z2 = a * (x2 - c) + d;
 
 		/*if (GEngine)
@@ -100,7 +118,6 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
 		}*/
 
-		float depth = 5.f; 
 
 		// I made it -depth and +depth since the ball is on y=0
 		vertices.Add(FVector(x1, -depth, z1));
@@ -108,21 +125,20 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		vertices.Add(FVector(x1, depth, z1));
 		vertices.Add(FVector(x2, depth, z2)); 
 
-		Triangles.Add(0 + 4 * (i - lowerBound));
-		Triangles.Add(2 + 4 * (i - lowerBound));
-		Triangles.Add(1 + 4 * (i - lowerBound));
-		Triangles.Add(1 + 4 * (i - lowerBound));
-		Triangles.Add(2 + 4 * (i - lowerBound));
-		Triangles.Add(3 + 4 * (i - lowerBound));
+		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
+
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
+		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
 	}
 
-	TArray<FVector> normals;
-
-	TArray<FVector2D> UV0;
-
-	TArray<FProcMeshTangent> tangents;
-
-	TArray<FLinearColor> vertexColors;
+	
 
 	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -166,44 +182,151 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);*/
 }
 
-void AFunctionMesh::GenerateSinFunction()
+void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
 {
-	// y = sin(a * x) + b 
+	// y = a * (b * (x - c)) ^ 2 + d
 
-	// Parameters, will expose later 
-	float a = 3.f;
-	float b = 0.5f;
+	float stride = 0.1;
+	float depth = 5.f;
+	TArray<FVector> normals;
+	TArray<FVector2D> UV0;
+	TArray<FProcMeshTangent> tangents;
+	TArray<FLinearColor> vertexColors;
 
-	int numSegments = 100;
-	for (int i = 0; i < numSegments; i += 1) {
-		float stride = 0.1;
-		float x1 = stride * i;
-		float z1 = sin(a * x1) + b;
-		float x2 = stride * (i + 1);
-		float z2 = sin(a * x2) + b;
+	for (float i = lowerBound; i < upperBound + 1; i += stride) {
+		float x1 = i;
+		float z1 = a * pow(b * (x1 - c), 2) + d;
+		float x2 = i + 1;
+		float z2 = a * pow(b * (x2 - c), 2) + d;
 
-		float depth = 10.f;
+		/*if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
+		}*/
 
-		vertices.Add(FVector(x1, 0, z1));
-		vertices.Add(FVector(x2, 0, z2));
+		vertices.Add(FVector(x1, -depth, z1));
+		vertices.Add(FVector(x2, -depth, z2));
 		vertices.Add(FVector(x1, depth, z1));
 		vertices.Add(FVector(x2, depth, z2));
 
-		Triangles.Add(0 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(3 + 4 * i);
+		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
 	}
 
+	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
+}
+
+void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
+{
+	// y = a * e ^ (b * (x - c)) + d
+
+	float stride = 0.1;
+	float depth = 5.f;
 	TArray<FVector> normals;
-
 	TArray<FVector2D> UV0;
-
 	TArray<FProcMeshTangent> tangents;
-
 	TArray<FLinearColor> vertexColors;
+
+	for (float i = lowerBound; i < upperBound + 1; i += stride) {
+		float x1 = i;
+		float z1 = a * exp(b * (x1 - c)) + d;
+		float x2 = i + 1;
+		float z2 = a * exp(b * (x2 - c)) + d;
+
+		vertices.Add(FVector(x1, -depth, z1));
+		vertices.Add(FVector(x2, -depth, z2));
+		vertices.Add(FVector(x1, depth, z1));
+		vertices.Add(FVector(x2, depth, z2));
+
+		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
+	}
+
+	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
+}
+
+void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
+{
+	// y = a * e ^ (b * (x - c)) + d
+
+	float stride = 0.1;
+	float depth = 5.f;
+	TArray<FVector> normals;
+	TArray<FVector2D> UV0;
+	TArray<FProcMeshTangent> tangents;
+	TArray<FLinearColor> vertexColors;
+
+	// Makes sure bounds are in range of domain
+	float adjustedLowerBound = std::max(lowerBound, 0 + stride);
+
+	for (float i = adjustedLowerBound; i < upperBound + 1; i += stride) {
+		float x1 = i;
+		float z1 = a * log(b * (x1 - c)) + d;
+		float x2 = i + 1;
+		float z2 = a * log(b * (x2 - c)) + d;
+
+		vertices.Add(FVector(x1, -depth, z1));
+		vertices.Add(FVector(x2, -depth, z2));
+		vertices.Add(FVector(x1, depth, z1));
+		vertices.Add(FVector(x2, depth, z2));
+
+		Triangles.Add(0 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
+		Triangles.Add(3 + 4 * (i - adjustedLowerBound) / stride);
+	}
+
+	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
+}
+
+void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
+{
+	// y = a * sin(b * (x - c)) + d
+
+	float stride = 0.1;
+	float depth = 5.f;
+	TArray<FVector> normals;
+	TArray<FVector2D> UV0;
+	TArray<FProcMeshTangent> tangents;
+	TArray<FLinearColor> vertexColors;
+
+	for (float i = lowerBound; i < upperBound + 1; i += stride) {
+		float x1 = i;
+		float z1 = a * sin(b * (x1 - c)) + d;
+		float x2 = i + 1;
+		float z2 = a * sin(b * (x2 - c)) + d;
+
+		/*if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
+		}*/
+
+		vertices.Add(FVector(x1, -depth, z1));
+		vertices.Add(FVector(x2, -depth, z2));
+		vertices.Add(FVector(x1, depth, z1));
+		vertices.Add(FVector(x2, depth, z2));
+
+		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
+	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
 }

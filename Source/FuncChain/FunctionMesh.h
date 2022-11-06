@@ -13,6 +13,9 @@ enum class FunctionType : uint8
 {
 	EMPTY UMETA(DisplayName = "Empty"),
 	LINEAR UMETA(DisplayName = "Linear"),
+	QUADRATIC UMETA(DisplayName = "Quadratic"),
+	EXPONENTIAL UMETA(DisplayName = "Exponential"),
+	LOGARITHMIC UMETA(DisplayName = "Logarithmic"),
 	SINE UMETA(DisplayName = "Sine"),
 };
 
@@ -39,7 +42,14 @@ protected:
 
 	void GenerateLinearFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
 
-	void GenerateSinFunction();
+	void GenerateQuadraticFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
+
+	void GenerateExponentialFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
+
+	void GenerateLogarithmicFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
+
+	void GenerateSineFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
+
 	
 	UPROPERTY(EditAnywhere, Meta = (MakeEditWidget = true))
 	TArray<FVector> vertices;
