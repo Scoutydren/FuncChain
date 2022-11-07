@@ -303,13 +303,20 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 	TArray<FLinearColor> vertexColors;
 
 	// Makes sure bounds are in range of domain
-	float adjustedLowerBound = std::max(lowerBound, 0 + stride);
+	float adjustedLowerBound = std::max(lowerBound, c + stride);
 
 	for (float i = adjustedLowerBound; i < upperBound + 1; i += stride) {
 		float x1 = i;
 		float z1 = a * log(b * (x1 - c)) + d;
 		float x2 = i + 1;
 		float z2 = a * log(b * (x2 - c)) + d;
+
+		/*if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
+		}*/
 
 		FVector p1 = FVector(x1, -depth, z1);
 		FVector p2 = FVector(x2, -depth, z2);
