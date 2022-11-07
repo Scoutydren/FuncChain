@@ -120,10 +120,15 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 
 
 		// I made it -depth and +depth since the ball is on y=0
-		vertices.Add(FVector(x1, -depth, z1));
-		vertices.Add(FVector(x2, -depth, z2));
-		vertices.Add(FVector(x1, depth, z1));
-		vertices.Add(FVector(x2, depth, z2)); 
+		FVector p1 = FVector(x1, -depth, z1);
+		FVector p2 = FVector(x2, -depth, z2);
+		FVector p3 = FVector(x1, depth, z1);
+		FVector p4 = FVector(x2, depth, z2);
+
+		vertices.Add(p1);
+		vertices.Add(p2);
+		vertices.Add(p3);
+		vertices.Add(p4); 
 
 		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
@@ -132,17 +137,22 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
 
+		//Assume normals are the same for all points on one subdivided square
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
+
 		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
 		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
 		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
 		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
 	}
 
-	
-
 	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
-
+	
 	/*
 	// Parameters, will expose later 
 	float e = 1.f;
@@ -206,10 +216,15 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
 		}*/
 
-		vertices.Add(FVector(x1, -depth, z1));
-		vertices.Add(FVector(x2, -depth, z2));
-		vertices.Add(FVector(x1, depth, z1));
-		vertices.Add(FVector(x2, depth, z2));
+		FVector p1 = FVector(x1, -depth, z1);
+		FVector p2 = FVector(x2, -depth, z2);
+		FVector p3 = FVector(x1, depth, z1);
+		FVector p4 = FVector(x2, depth, z2);
+
+		vertices.Add(p1);
+		vertices.Add(p2);
+		vertices.Add(p3);
+		vertices.Add(p4);
 
 		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
@@ -217,6 +232,14 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
+
+		//Assume normals are the same for all points on one subdivided square
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
+
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -239,10 +262,15 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 		float x2 = i + 1;
 		float z2 = a * exp(b * (x2 - c)) + d;
 
-		vertices.Add(FVector(x1, -depth, z1));
-		vertices.Add(FVector(x2, -depth, z2));
-		vertices.Add(FVector(x1, depth, z1));
-		vertices.Add(FVector(x2, depth, z2));
+		FVector p1 = FVector(x1, -depth, z1);
+		FVector p2 = FVector(x2, -depth, z2);
+		FVector p3 = FVector(x1, depth, z1);
+		FVector p4 = FVector(x2, depth, z2);
+
+		vertices.Add(p1);
+		vertices.Add(p2);
+		vertices.Add(p3);
+		vertices.Add(p4);
 
 		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
@@ -250,6 +278,14 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
+
+		//Assume normals are the same for all points on one subdivided square
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
+
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -275,10 +311,15 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 		float x2 = i + 1;
 		float z2 = a * log(b * (x2 - c)) + d;
 
-		vertices.Add(FVector(x1, -depth, z1));
-		vertices.Add(FVector(x2, -depth, z2));
-		vertices.Add(FVector(x1, depth, z1));
-		vertices.Add(FVector(x2, depth, z2));
+		FVector p1 = FVector(x1, -depth, z1);
+		FVector p2 = FVector(x2, -depth, z2);
+		FVector p3 = FVector(x1, depth, z1);
+		FVector p4 = FVector(x2, depth, z2);
+
+		vertices.Add(p1);
+		vertices.Add(p2);
+		vertices.Add(p3);
+		vertices.Add(p4);
 
 		Triangles.Add(0 + 4 * (i - adjustedLowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
@@ -286,6 +327,13 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 		Triangles.Add(1 + 4 * (i - adjustedLowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
 		Triangles.Add(3 + 4 * (i - adjustedLowerBound) / stride);
+
+		//Assume normals are the same for all points on one subdivided square
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -315,10 +363,15 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
 		}*/
 
-		vertices.Add(FVector(x1, -depth, z1));
-		vertices.Add(FVector(x2, -depth, z2));
-		vertices.Add(FVector(x1, depth, z1));
-		vertices.Add(FVector(x2, depth, z2));
+		FVector p1 = FVector(x1, -depth, z1);
+		FVector p2 = FVector(x2, -depth, z2);
+		FVector p3 = FVector(x1, depth, z1);
+		FVector p4 = FVector(x2, depth, z2);
+
+		vertices.Add(p1);
+		vertices.Add(p2);
+		vertices.Add(p3);
+		vertices.Add(p4);
 
 		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
@@ -326,6 +379,12 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
 		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
+
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
