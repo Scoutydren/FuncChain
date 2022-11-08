@@ -143,11 +143,6 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		for (int j = 0; j < 4; j++) {
 			normals.Add(n);
 		}
-
-		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
-		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
-		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
-		vertexColors.Add(FLinearColor(0, 0, 0, 1.0));
 	}
 
 	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
@@ -239,7 +234,6 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 		for (int j = 0; j < 4; j++) {
 			normals.Add(n);
 		}
-
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -285,7 +279,6 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 		for (int j = 0; j < 4; j++) {
 			normals.Add(n);
 		}
-
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -402,4 +395,3 @@ void AFunctionMesh::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
