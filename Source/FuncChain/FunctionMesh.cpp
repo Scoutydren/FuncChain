@@ -97,7 +97,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	}*/
 
 	float stride = 1;
-	float width = 0.2f;
+	float width = 0.1f;
 	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -206,7 +206,7 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 	// y = a * (b * (x - c)) ^ 2 + d
 
 	float stride = 0.1;
-	float width = 0.2f;
+	float width = 0.1f;
 	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -308,7 +308,7 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 	// y = a * e ^ (b * (x - c)) + d
 
 	float stride = 0.1;
-	float width = 0.2f;
+	float width = 0.1f;
 	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -410,7 +410,7 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 	// y = a * e ^ (b * (x - c)) + d
 
 	float stride = 0.1;
-	float width = 0.2f;
+	float width = 0.1f;
 	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -520,7 +520,7 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 	// y = a * sin(b * (x - c)) + d
 
 	float stride = 0.1;
-	float width = 0.2f;
+	float width = 0.1f;
 	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
