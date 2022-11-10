@@ -97,7 +97,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	}*/
 
 	float stride = 1;
-	float width = 0.5f;
+	float width = 0.2f;
 	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
@@ -198,46 +198,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		//}
 	}
 
-	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
-	
-	/*
-	// Parameters, will expose later 
-	float e = 1.f;
-	float f = 0.f;
-
-	int numSegments = 100;
-	for (int i = 0; i < numSegments; i += 1) {
-		int stride = 1;
-		float x1 = stride * i;
-		float z1 = e * x1 + f;
-		float x2 = stride * (i + 1);
-		float z2 = e * x2 + f;
-
-		float depth = 10.f;
-
-		vertices.Add(FVector(x1, 0, z1));
-		vertices.Add(FVector(x2, 0, z2));
-		vertices.Add(FVector(x1, depth, z1));
-		vertices.Add(FVector(x2, depth, z2));
-
-		Triangles.Add(0 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(1 + 4 * i);
-		Triangles.Add(2 + 4 * i);
-		Triangles.Add(3 + 4 * i);
-	}
-
-	TArray<FVector> normals;
-
-	TArray<FVector2D> UV0;
-
-	TArray<FProcMeshTangent> tangents;
-
-	TArray<FLinearColor> vertexColors;
-
-	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);*/
 }
 
 void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
@@ -245,7 +206,8 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 	// y = a * (b * (x - c)) ^ 2 + d
 
 	float stride = 0.1;
-	float depth = 5.f;
+	float width = 0.2f;
+	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
 	TArray<FProcMeshTangent> tangents;
@@ -253,26 +215,82 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 
 	for (float i = lowerBound; i < upperBound; i += stride) {
 		float x1 = i;
-		float z1 = a * pow(b * (x1 - c), 2) + d;
 		float x2 = i + stride;
+
+		// f(x) = ab^2 * (x^2 - 2cx + c^2) + d
+		float z1 = a * pow(b * (x1 - c), 2) + d;
 		float z2 = a * pow(b * (x2 - c), 2) + d;
 
-		FVector p1 = FVector(x1, -depth, z1);
-		FVector p2 = FVector(x2, -depth, z2);
-		FVector p3 = FVector(x1, depth, z1);
-		FVector p4 = FVector(x2, depth, z2);
+		// f'(x) = ab^2 (2x - 2c)
+		float dz1 = a * pow(b, 2) * (2 * x1 - 2 * c);
+		float dz2 = a * pow(b, 2) * (2 * x2 - 2 * c);
+
+		// Get unit vector of tangent
+		FVector tangent1 = FVector(1, 0, dz1);
+		FVector tangent2 = FVector(1, 0, dz2);
+		tangent1.Normalize();
+		tangent2.Normalize();
+
+		// Get perpendicular vector
+		FVector left = tangent1.RotateAngleAxis(-90, FVector(0, 1, 0));
+		FVector right = tangent1.RotateAngleAxis(90, FVector(0, 1, 0));
+
+		FVector p1 = FVector(x1, -depth, z1) + left * width;
+		FVector p2 = FVector(x2, -depth, z2) + left * width;
+		FVector p3 = FVector(x1, depth, z1) + left * width;
+		FVector p4 = FVector(x2, depth, z2) + left * width;
+		FVector p5 = FVector(x1, -depth, z1) + right * width;
+		FVector p6 = FVector(x2, -depth, z2) + right * width;
+		FVector p7 = FVector(x1, depth, z1) + right * width;
+		FVector p8 = FVector(x2, depth, z2) + right * width;;
 
 		vertices.Add(p1);
 		vertices.Add(p2);
 		vertices.Add(p3);
 		vertices.Add(p4);
+		vertices.Add(p5);
+		vertices.Add(p6);
+		vertices.Add(p7);
+		vertices.Add(p8);
 
-		Triangles.Add(0 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(2 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(1 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(1 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(2 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(3 + 4 * std::round((i - lowerBound) / stride));
+		// Use right hand rule to figure out which side of triangle is visible
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
 
 		////Assume normals are the same for all points on one subdivided square
 		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
@@ -290,7 +308,8 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 	// y = a * e ^ (b * (x - c)) + d
 
 	float stride = 0.1;
-	float depth = 5.f;
+	float width = 0.2f;
+	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
 	TArray<FProcMeshTangent> tangents;
@@ -298,33 +317,89 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 
 	for (float i = lowerBound; i < upperBound; i += stride) {
 		float x1 = i;
+		float x2 = i + stride;
+
+		// f(x)
 		float z1 = a * exp(b * (x1 - c)) + d;
-		float x2 = i + 1;
 		float z2 = a * exp(b * (x2 - c)) + d;
 
-		FVector p1 = FVector(x1, -depth, z1);
-		FVector p2 = FVector(x2, -depth, z2);
-		FVector p3 = FVector(x1, depth, z1);
-		FVector p4 = FVector(x2, depth, z2);
+		// f'(x) = ab * e^{b * (x-c)}
+		float dz1 = a * b * exp(b * (x1 - c));
+		float dz2 = a * b * exp(b * (x2 - c));
+
+		// Get unit vector of tangent
+		FVector tangent1 = FVector(1, 0, dz1);
+		FVector tangent2 = FVector(1, 0, dz2);
+		tangent1.Normalize();
+		tangent2.Normalize();
+
+		// Get perpendicular vector
+		FVector left = tangent1.RotateAngleAxis(-90, FVector(0, 1, 0));
+		FVector right = tangent1.RotateAngleAxis(90, FVector(0, 1, 0));
+
+		FVector p1 = FVector(x1, -depth, z1) + left * width;
+		FVector p2 = FVector(x2, -depth, z2) + left * width;
+		FVector p3 = FVector(x1, depth, z1) + left * width;
+		FVector p4 = FVector(x2, depth, z2) + left * width;
+		FVector p5 = FVector(x1, -depth, z1) + right * width;
+		FVector p6 = FVector(x2, -depth, z2) + right * width;
+		FVector p7 = FVector(x1, depth, z1) + right * width;
+		FVector p8 = FVector(x2, depth, z2) + right * width;;
 
 		vertices.Add(p1);
 		vertices.Add(p2);
 		vertices.Add(p3);
 		vertices.Add(p4);
+		vertices.Add(p5);
+		vertices.Add(p6);
+		vertices.Add(p7);
+		vertices.Add(p8);
 
-		Triangles.Add(0 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(2 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(1 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(1 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(2 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(3 + 4 * std::round((i - lowerBound) / stride));
+		// Use right hand rule to figure out which side of triangle is visible
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
 
-		//Assume normals are the same for all points on one subdivided square
-		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
 
-		for (int j = 0; j < 4; j++) {
-			normals.Add(n);
-		}
+		////Assume normals are the same for all points on one subdivided square
+		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		//for (int j = 0; j < 4; j++) {
+		//	normals.Add(n);
+		//}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -335,7 +410,8 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 	// y = a * e ^ (b * (x - c)) + d
 
 	float stride = 0.1;
-	float depth = 5.f;
+	float width = 0.2f;
+	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
 	TArray<FProcMeshTangent> tangents;
@@ -345,41 +421,95 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 	float adjustedLowerBound = std::max(lowerBound, c + stride);
 
 	for (float i = adjustedLowerBound; i < upperBound; i += stride) {
+
 		float x1 = i;
-		float z1 = a * log(b * (x1 - c)) + d;
 		float x2 = i + stride;
+
+		// f(x)
+		float z1 = a * log(b * (x1 - c)) + d;
 		float z2 = a * log(b * (x2 - c)) + d;
 
-		/*if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
-		}*/
+		/*GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));*/
 
-		FVector p1 = FVector(x1, -depth, z1);
-		FVector p2 = FVector(x2, -depth, z2);
-		FVector p3 = FVector(x1, depth, z1);
-		FVector p4 = FVector(x2, depth, z2);
+		// f'(x) = a / (x - c)
+		float dz1 = a / (x1 - c);
+		float dz2 = a / (x2 - c);
+
+		// Get unit vector of tangent
+		FVector tangent1 = FVector(1, 0, dz1);
+		FVector tangent2 = FVector(1, 0, dz2);
+		tangent1.Normalize();
+		tangent2.Normalize();
+
+		// Get perpendicular vector
+		FVector left = tangent1.RotateAngleAxis(-90, FVector(0, 1, 0));
+		FVector right = tangent1.RotateAngleAxis(90, FVector(0, 1, 0));
+
+		FVector p1 = FVector(x1, -depth, z1) + left * width;
+		FVector p2 = FVector(x2, -depth, z2) + left * width;
+		FVector p3 = FVector(x1, depth, z1) + left * width;
+		FVector p4 = FVector(x2, depth, z2) + left * width;
+		FVector p5 = FVector(x1, -depth, z1) + right * width;
+		FVector p6 = FVector(x2, -depth, z2) + right * width;
+		FVector p7 = FVector(x1, depth, z1) + right * width;
+		FVector p8 = FVector(x2, depth, z2) + right * width;;
 
 		vertices.Add(p1);
 		vertices.Add(p2);
 		vertices.Add(p3);
 		vertices.Add(p4);
+		vertices.Add(p5);
+		vertices.Add(p6);
+		vertices.Add(p7);
+		vertices.Add(p8);
 
-		Triangles.Add(0 + 4 * (i - adjustedLowerBound) / stride);
-		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
-		Triangles.Add(1 + 4 * (i - adjustedLowerBound) / stride);
-		Triangles.Add(1 + 4 * (i - adjustedLowerBound) / stride);
-		Triangles.Add(2 + 4 * (i - adjustedLowerBound) / stride);
-		Triangles.Add(3 + 4 * (i - adjustedLowerBound) / stride);
+		// Use right hand rule to figure out which side of triangle is visible
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride));
 
-		//Assume normals are the same for all points on one subdivided square
-		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride));
 
-		for (int j = 0; j < 4; j++) {
-			normals.Add(n);
-		}
+		////Assume normals are the same for all points on one subdivided square
+		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		//for (int j = 0; j < 4; j++) {
+		//	normals.Add(n);
+		//}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -390,7 +520,8 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 	// y = a * sin(b * (x - c)) + d
 
 	float stride = 0.1;
-	float depth = 5.f;
+	float width = 0.2f;
+	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
 	TArray<FProcMeshTangent> tangents;
@@ -398,39 +529,88 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 
 	for (float i = lowerBound; i < upperBound; i += stride) {
 		float x1 = i;
-		float z1 = a * sin(b * (x1 - c)) + d;
 		float x2 = i + stride;
+
+		// f(x)
+		float z1 = a * sin(b * (x1 - c)) + d;
 		float z2 = a * sin(b * (x2 - c)) + d;
 
-		/*if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x1, z1));
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), x2, z2));
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
-		}*/
+		// f'(x) = ab * cos(b * (x-c))
+		float dz1 = a * b * cos(b * (x1 - c));
+		float dz2 = a * b * cos(b * (x2 - c));
 
-		FVector p1 = FVector(x1, -depth, z1);
-		FVector p2 = FVector(x2, -depth, z2);
-		FVector p3 = FVector(x1, depth, z1);
-		FVector p4 = FVector(x2, depth, z2);
+		// Get unit vector of tangent
+		FVector tangent1 = FVector(1, 0, dz1);
+		FVector tangent2 = FVector(1, 0, dz2);
+		tangent1.Normalize();
+		tangent2.Normalize();
+
+		// Get perpendicular vector
+		FVector left = tangent1.RotateAngleAxis(-90, FVector(0, 1, 0));
+		FVector right = tangent1.RotateAngleAxis(90, FVector(0, 1, 0));
+
+		FVector p1 = FVector(x1, -depth, z1) + left * width;
+		FVector p2 = FVector(x2, -depth, z2) + left * width;
+		FVector p3 = FVector(x1, depth, z1) + left * width;
+		FVector p4 = FVector(x2, depth, z2) + left * width;
+		FVector p5 = FVector(x1, -depth, z1) + right * width;
+		FVector p6 = FVector(x2, -depth, z2) + right * width;
+		FVector p7 = FVector(x1, depth, z1) + right * width;
+		FVector p8 = FVector(x2, depth, z2) + right * width;;
 
 		vertices.Add(p1);
 		vertices.Add(p2);
 		vertices.Add(p3);
 		vertices.Add(p4);
+		vertices.Add(p5);
+		vertices.Add(p6);
+		vertices.Add(p7);
+		vertices.Add(p8);
 
-		Triangles.Add(0 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(2 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(1 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(1 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(2 + 4 * std::round((i - lowerBound) / stride));
-		Triangles.Add(3 + 4 * std::round((i - lowerBound) / stride));
+		// Use right hand rule to figure out which side of triangle is visible
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
 
-		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride));
+
+		/*FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
 
 		for (int j = 0; j < 4; j++) {
 			normals.Add(n);
-		}
+		}*/
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
