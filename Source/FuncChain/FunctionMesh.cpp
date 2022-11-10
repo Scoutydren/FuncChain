@@ -407,7 +407,7 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 
 void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
 {
-	// y = a * e ^ (b * (x - c)) + d
+	// y = a * ln (b * (x - c)) + d
 
 	float stride = 0.1;
 	float width = 0.1f;
@@ -418,9 +418,17 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 	TArray<FLinearColor> vertexColors;
 
 	// Makes sure bounds are in range of domain
-	float adjustedLowerBound = std::max(lowerBound, c + stride);
+	int direction = b >= 0 ? 1 : -1;
+	float adjustedLowerBound = lowerBound;
+	if (direction == 1) {
+		adjustedLowerBound = std::max(lowerBound, c + stride);
+	}
+	float adjustedUpperBound = upperBound;
+	if (direction == -1) {
+		adjustedUpperBound = std::min(upperBound, c - stride);
+	}
 
-	for (float i = adjustedLowerBound; i < upperBound; i += stride) {
+	for (float i = adjustedLowerBound; i < adjustedUpperBound; i += stride) {
 
 		float x1 = i;
 		float x2 = i + stride;
