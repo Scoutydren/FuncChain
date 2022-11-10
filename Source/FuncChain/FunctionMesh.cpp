@@ -90,8 +90,6 @@ void AFunctionMesh::GenerateTestTriangle()
 void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound)
 {
 	// y = a(x - c) + d
-	// This is the function we want to use instead
-	// For sine, we want to use y = asin(b * x - c) + d
 
 	/*if (GEngine)
 	{
@@ -99,7 +97,8 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	}*/
 
 	float stride = 1;
-	float depth = 5.f;
+	float width = 0.5f;
+	float depth = 3.f;
 	TArray<FVector> normals;
 	TArray<FVector2D> UV0;
 	TArray<FProcMeshTangent> tangents;
@@ -107,9 +106,25 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 
 	for (float i = lowerBound; i < upperBound + 1; i += stride) {
 		float x1 = i;
-		float z1 = a * (x1 - c) + d;
 		float x2 = i + 1;
+
+		// f(x)
+		float z1 = a * (x1 - c) + d;
 		float z2 = a * (x2 - c) + d;
+
+		// f'(x) = a
+		float dz1 = a;
+		float dz2 = a;
+
+		// Get unit vector of tangent
+		FVector tangent1 = FVector(1, 0, dz1);
+		FVector tangent2 = FVector(1, 0, dz2);
+		tangent1.Normalize();
+		tangent2.Normalize();
+
+		// Get perpendicular vector
+		FVector left = tangent1.RotateAngleAxis(-90, FVector(0, 1, 0));
+		FVector right = tangent1.RotateAngleAxis(90, FVector(0, 1, 0));
 
 		/*if (GEngine)
 		{
@@ -118,31 +133,69 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("------------------------")));
 		}*/
 
-
-		// I made it -depth and +depth since the ball is on y=0
-		FVector p1 = FVector(x1, -depth, z1);
-		FVector p2 = FVector(x2, -depth, z2);
-		FVector p3 = FVector(x1, depth, z1);
-		FVector p4 = FVector(x2, depth, z2);
+		FVector p1 = FVector(x1, -depth, z1) + left * width;
+		FVector p2 = FVector(x2, -depth, z2) + left * width;
+		FVector p3 = FVector(x1, depth, z1) + left * width;
+		FVector p4 = FVector(x2, depth, z2) + left * width;
+		FVector p5 = FVector(x1, -depth, z1) + right * width;
+		FVector p6 = FVector(x2, -depth, z2) + right * width;
+		FVector p7 = FVector(x1, depth, z1) + right * width;
+		FVector p8 = FVector(x2, depth, z2) + right * width;;
 
 		vertices.Add(p1);
 		vertices.Add(p2);
 		vertices.Add(p3);
-		vertices.Add(p4); 
+		vertices.Add(p4);
+		vertices.Add(p5);
+		vertices.Add(p6);
+		vertices.Add(p7);
+		vertices.Add(p8);
 
-		Triangles.Add(0 + 4 * (i - lowerBound) / stride);
-		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
-		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
-		Triangles.Add(1 + 4 * (i - lowerBound) / stride);
-		Triangles.Add(2 + 4 * (i - lowerBound) / stride);
-		Triangles.Add(3 + 4 * (i - lowerBound) / stride);
+		// Use right hand rule to figure out which side of triangle is visible
+		Triangles.Add(0 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(6 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(6 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(7 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(6 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(4 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(7 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(7 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(4 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(5 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(4 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(0 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(5 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(5 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(0 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(1 + 8 * (i - lowerBound) / stride);
 
-		//Assume normals are the same for all points on one subdivided square
-		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		Triangles.Add(1 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(5 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(5 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(3 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(7 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(6 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(4 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(4 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(2 + 8 * (i - lowerBound) / stride);
+		Triangles.Add(0 + 8 * (i - lowerBound) / stride);
 
-		for (int j = 0; j < 4; j++) {
-			normals.Add(n);
-		}
+		////Assume normals are the same for all points on one subdivided square
+		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+
+		//for (int j = 0; j < 4; j++) {
+		//	normals.Add(n);
+		//}
 	}
 
 	// How do you update/remove a function? I thought it could be taken care of by indentifier but it didn't work for me
