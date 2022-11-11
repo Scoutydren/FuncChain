@@ -26,6 +26,11 @@ class FUNCCHAIN_API AFunctionMesh : public AActor
 	
 public:	
 
+	const float upperX = 100;
+	const float upperY = 100;
+	const float lowerX = -100;
+	const float lowerY = -100;
+
 	UPROPERTY(BlueprintReadWrite)
 	UProceduralMeshComponent* ProceduralMesh;
 
@@ -34,6 +39,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Generate(FunctionType functionType, int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
 
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,6 +56,7 @@ protected:
 
 	void GenerateSineFunction(int identifier, float a, float b, float c, float d, float lowerBound, float upperBound);
 
+	bool IsOutOfBounds(float x, float y);
 	
 	UPROPERTY(EditAnywhere, Meta = (MakeEditWidget = true))
 	TArray<FVector> vertices;
@@ -68,8 +75,4 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	TArray<FLinearColor> vertexColors;*/
-
-
-public:	
-	virtual void Tick(float DeltaTime) override;
 };
