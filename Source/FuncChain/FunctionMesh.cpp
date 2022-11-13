@@ -91,11 +91,6 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 {
 	// y = a(x - c) + d
 
-	/*if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f %f"), lowerBound, upperBound));
-	}*/
-
 	float stride = 1;
 	float width = 0.1f;
 	float depth = 3.f;
@@ -158,43 +153,43 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		vertices.Add(p8);
 
 		// Use right hand rule to figure out which side of triangle is visible
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
 
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
 		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
@@ -266,43 +261,43 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 		vertices.Add(p8);
 
 		// Use right hand rule to figure out which side of triangle is visible
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
 
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
 		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
@@ -374,43 +369,43 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 		vertices.Add(p8);
 
 		// Use right hand rule to figure out which side of triangle is visible
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
 
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
 		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
@@ -448,7 +443,6 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 	}
 
 	for (float i = adjustedLowerBound; i < adjustedUpperBound; i += stride) {
-
 		float x1 = i;
 		float x2 = i + stride;
 
@@ -494,43 +488,43 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 		vertices.Add(p8);
 
 		// Use right hand rule to figure out which side of triangle is visible
-		Triangles.Add(0 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
 
-		Triangles.Add(1 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - adjustedLowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
 		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
@@ -602,43 +596,43 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 		vertices.Add(p8);
 
 		// Use right hand rule to figure out which side of triangle is visible
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
 
-		Triangles.Add(1 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(5 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(3 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(7 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(6 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(4 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(2 + 8 * std::round((i - skipped - lowerBound) / stride));
-		Triangles.Add(0 + 8 * std::round((i - skipped - lowerBound) / stride));
+		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
+		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
 		/*FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
 
