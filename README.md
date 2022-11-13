@@ -10,7 +10,9 @@ function chain reaction machine
 6. Basic level is currently in Minimal_Default.
 7. Go to Project Settings and search for Modes.
 8. Change Default Pawn Class to None.
-9. Search for gravity and change to -490/3
+9. Search for "Game instance".
+10. Change game instance to CustomGameInstance.
+11. Search for gravity and change to -490/3
 
 ## Fixes
 * If the scale seems off, go to project settings -> engine -> user interface. Under DPI Scaling, set application scale to 1.0 (or whatever feels comfortable).
