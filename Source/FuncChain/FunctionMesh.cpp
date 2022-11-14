@@ -92,7 +92,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 	// y = a(x - c) + d
 
 	float stride = 1;
-	float width = 0.1f;
+	float width = 0.3f;
 	float depth = 3.f;
 	int skipped = 0;
 	TArray<FVector> normals;
@@ -159,6 +159,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		Triangles.Add(1 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
+
 		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
@@ -166,12 +167,14 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
+
 		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
+
 		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
@@ -184,6 +187,7 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		Triangles.Add(5 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(3 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(7 + 8 * std::round((i - lowerBound) / stride - skipped));
+
 		Triangles.Add(6 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(4 + 8 * std::round((i - lowerBound) / stride - skipped));
@@ -192,11 +196,17 @@ void AFunctionMesh::GenerateLinearFunction(int identifier, float a, float b, flo
 		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
-		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
 
-		//for (int j = 0; j < 4; j++) {
-		//	normals.Add(n);
-		//}
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
+
+		FVector n1 = FVector(n.X, n.Y, -n.Z);
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n1);
+		}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -207,7 +217,7 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 	// y = a * (b * (x - c)) ^ 2 + d
 
 	float stride = 0.1;
-	float width = 0.1f;
+	float width = 0.3f;
 	float depth = 3.f;
 	int skipped = 0;
 	TArray<FVector> normals;
@@ -300,11 +310,17 @@ void AFunctionMesh::GenerateQuadraticFunction(int identifier, float a, float b, 
 		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
-		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
 
-		//for (int j = 0; j < 4; j++) {
-		//	normals.Add(n);
-		//}
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
+
+		FVector n1 = FVector(n.X, n.Y, -n.Z);
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n1);
+		}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -315,7 +331,7 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 	// y = a * e ^ (b * (x - c)) + d
 
 	float stride = 0.1;
-	float width = 0.1f;
+	float width = 0.3f;
 	float depth = 3.f;
 	int skipped = 0;
 	TArray<FVector> normals;
@@ -408,11 +424,17 @@ void AFunctionMesh::GenerateExponentialFunction(int identifier, float a, float b
 		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
-		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
 
-		//for (int j = 0; j < 4; j++) {
-		//	normals.Add(n);
-		//}
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
+
+		FVector n1 = FVector(n.X, n.Y, -n.Z);
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n1);
+		}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -423,7 +445,7 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 	// y = a * ln (b * (x - c)) + d
 
 	float stride = 0.1;
-	float width = 0.1f;
+	float width = 0.3f;
 	float depth = 3.f;
 	int skipped = 0;
 	TArray<FVector> normals;
@@ -527,11 +549,17 @@ void AFunctionMesh::GenerateLogarithmicFunction(int identifier, float a, float b
 		Triangles.Add(0 + 8 * std::round((i - adjustedLowerBound) / stride - skipped));
 
 		////Assume normals are the same for all points on one subdivided square
-		//FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
 
-		//for (int j = 0; j < 4; j++) {
-		//	normals.Add(n);
-		//}
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n);
+		}
+
+		FVector n1 = FVector(n.X, n.Y, -n.Z);
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n1);
+		}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
@@ -542,7 +570,7 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 	// y = a * sin(b * (x - c)) + d
 
 	float stride = 0.1;
-	float width = 0.1f;
+	float width = 0.3f;
 	float depth = 3.f;
 	int skipped = 0;
 	TArray<FVector> normals;
@@ -634,11 +662,17 @@ void AFunctionMesh::GenerateSineFunction(int identifier, float a, float b, float
 		Triangles.Add(2 + 8 * std::round((i - lowerBound) / stride - skipped));
 		Triangles.Add(0 + 8 * std::round((i - lowerBound) / stride - skipped));
 
-		/*FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
+		FVector n = FVector::CrossProduct(p1, p2).GetSafeNormal();
 
 		for (int j = 0; j < 4; j++) {
 			normals.Add(n);
-		}*/
+		}
+
+		FVector n1 = FVector(n.X, n.Y, -n.Z);
+
+		for (int j = 0; j < 4; j++) {
+			normals.Add(n1);
+		}
 	}
 
 	ProceduralMesh->CreateMeshSection_LinearColor(0, vertices, Triangles, normals, UV0, vertexColors, tangents, true);
